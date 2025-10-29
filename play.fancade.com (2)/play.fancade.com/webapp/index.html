@@ -1,87 +1,62 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Fancade Pool</title>
-  <link rel="icon" href="favicon.ico" />
-  <link rel="stylesheet" href="fancade_stripped.css" />
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      background: #000;
-      color: #fff;
-      overflow: hidden;
-      font-family: sans-serif;
-    }
-    #unity-container {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    #unity-canvas {
-      width: 100%;
-      height: 100%;
-      background: #000;
-    }
-    #loading {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      color: white;
-      font-size: 20px;
-    }
-  </style>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <!-- This meta tag is crucial for mobile responsiveness -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Fancade - Pool</title>
+    
+    <!-- This is your gameId -->
+    <script>
+        var gameId = "1631551221147738"; 
+    </script>
+    
+    <!-- These are the scripts from your folder -->
+    <script src="unity.js"></script>
+    <script src="index.js"></script>
+    
+    <!-- This is the stylesheet from your folder -->
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-  <div id="unity-container">
-    <canvas id="unity-canvas"></canvas>
-    <div id="loading">Loading Fancade Pool...</div>
-  </div>
+<body class="dark">
+    <!-- The main game container -->
+    <div id="game-container">
+        <div id="loader">
+            <div id="progress-bar">
+                <div id="progress-bar-full"></div>
+            </div>
+            <div id="loader-logo"></div>
+        </div>
+        <canvas id="unity-canvas"></canvas>
+    </div>
 
-  <!-- Poki SDK scripts -->
-  <script src="../../game-cdn.poki.com/scripts/v2/poki-sdk.js"></script>
-  <script src="../../game-cdn.poki.com/scripts/v2/poki-sdk-core-v2.js"></script>
-  <script src="../../game-cdn.poki.com/scripts/v2/poki-sdk-core-v2-util.js"></script>
-  <script src="../../game-cdn.poki.com/scripts/v2/poki-sdk-core-v2-game.js"></script>
+    <!-- Container for game title and info -->
+    <div id="game-info">
+        <img id="game-thumbnail" src="game.png" alt="Game Thumbnail">
+        <div id="game-details">
+            <div id="game-title">Pool</div>
+            <div id="game-author">by KAYAZzz</div>
+        </div>
+    </div>
 
-  <!-- Main game loader -->
-  <script>
-    const canvas = document.getElementById("unity-canvas");
-    const loading = document.getElementById("loading");
-
-    const config = {
-      dataUrl: "index_stripped.data",
-      frameworkUrl: "index_stripped.js",
-      codeUrl: "index_stripped.wasm",
-      streamingAssetsUrl: "StreamingAssets",
-      companyName: "KAYAZzz",
-      productName: "Fancade Pool",
-      productVersion: "1.0",
-    };
-
-    const loader = document.createElement("script");
-    loader.src = "index_stripped.js";
-    loader.onload = () => {
-      createUnityInstance(canvas, config, (progress) => {
-        loading.innerText = "Loading: " + Math.round(progress * 100) + "%";
-      })
-        .then((unityInstance) => {
-          loading.style.display = "none";
-          console.log("Game loaded successfully!");
-        })
-        .catch((message) => {
-          loading.innerText = "Failed to load game.\n" + message;
-          console.error(message);
-        });
-    };
-    document.body.appendChild(loader);
-  </script>
+    <!-- Script to load the game -->
+    <script>
+        // This is the correct way to load your game based on your unity.js file
+        var gameInstance = UnityLoader.instantiate(
+            "game-container",
+            "game.json", // This JSON file tells UnityLoader which files to load
+            {
+                onProgress: function (gameInstance, progress) {
+                    var progressBarFull = document.querySelector("#progress-bar-full");
+                    progressBarFull.style.width = (progress * 100) + "%";
+                    if (progress === 1) {
+                        document.querySelector("#loader").style.display = "none";
+                    }
+                }
+            }
+        );
+    </script>
 </body>
 </html>
+
