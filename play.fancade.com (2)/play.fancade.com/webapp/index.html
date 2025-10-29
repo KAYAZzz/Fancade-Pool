@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Fancade Pool</title>
+  <link rel="icon" href="favicon.ico" />
+  <link rel="stylesheet" href="fancade_stripped.css" />
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: #000;
+      color: #fff;
+      overflow: hidden;
+      font-family: sans-serif;
+    }
+    #unity-container {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #unity-canvas {
+      width: 100%;
+      height: 100%;
+      background: #000;
+    }
+    #loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="unity-container">
+    <canvas id="unity-canvas"></canvas>
+    <div id="loading">Loading Fancade Pool...</div>
+  </div>
+
+  <script>
+    // Fancade-style loader (like in genizy/fancade)
+    const canvas = document.getElementById("unity-canvas");
+    const loading = document.getElementById("loading");
+
+    const config = {
+      dataUrl: "index_stripped.data",
+      frameworkUrl: "index_stripped.js",
+      codeUrl: "index_stripped.wasm",
+      streamingAssetsUrl: "StreamingAssets",
+      companyName: "KAYAZzz",
+      productName: "Fancade Pool",
+      productVersion: "1.0",
+    };
+
+    // Load Unity-style engine from the stripped JS file
+    const loader = document.createElement("script");
+    loader.src = "index_stripped.js";
+    loader.onload = () => {
+      createUnityInstance(canvas, config, (progress) => {
+        loading.innerText = "Loading: " + Math.round(progress * 100) + "%";
+      }).then((unityInstance) => {
+        loading.style.display = "none";
+      }).catch((message) => {
+        loading.innerText = "Failed to load game.\n" + message;
+      });
+    };
+    document.body.appendChild(loader);
+  </script>
+</body>
+</html>
