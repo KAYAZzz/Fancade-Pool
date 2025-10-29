@@ -20,9 +20,6 @@
     #unity-container {
       width: 100%;
       height: 100%;
-      position: absolute;
-      top: 0;
-      left: 0;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -48,8 +45,14 @@
     <div id="loading">Loading Fancade Pool...</div>
   </div>
 
+  <!-- Poki SDK scripts -->
+  <script src="../../game-cdn.poki.com/scripts/v2/poki-sdk.js"></script>
+  <script src="../../game-cdn.poki.com/scripts/v2/poki-sdk-core-v2.js"></script>
+  <script src="../../game-cdn.poki.com/scripts/v2/poki-sdk-core-v2-util.js"></script>
+  <script src="../../game-cdn.poki.com/scripts/v2/poki-sdk-core-v2-game.js"></script>
+
+  <!-- Main game loader -->
   <script>
-    // Fancade-style loader (like in genizy/fancade)
     const canvas = document.getElementById("unity-canvas");
     const loading = document.getElementById("loading");
 
@@ -63,17 +66,20 @@
       productVersion: "1.0",
     };
 
-    // Load Unity-style engine from the stripped JS file
     const loader = document.createElement("script");
     loader.src = "index_stripped.js";
     loader.onload = () => {
       createUnityInstance(canvas, config, (progress) => {
         loading.innerText = "Loading: " + Math.round(progress * 100) + "%";
-      }).then((unityInstance) => {
-        loading.style.display = "none";
-      }).catch((message) => {
-        loading.innerText = "Failed to load game.\n" + message;
-      });
+      })
+        .then((unityInstance) => {
+          loading.style.display = "none";
+          console.log("Game loaded successfully!");
+        })
+        .catch((message) => {
+          loading.innerText = "Failed to load game.\n" + message;
+          console.error(message);
+        });
     };
     document.body.appendChild(loader);
   </script>
