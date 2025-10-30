@@ -140,8 +140,8 @@
             // Framework JS file (source_min_stripped.js is loaded in the head, this points to its data source)
             frameworkUrl: buildUrl + "/source_min_stripped.js", 
             
-            // CRITICAL FIX: Changed from index_stripped.wasm (missing in your repo) to a common alternative.
-            codeUrl: buildUrl + "/source_min_stripped.wasm", 
+            // CRITICAL FIX: Pointing to the file confirmed to exist in your 'webapp' folder.
+            codeUrl: buildUrl + "/index_stripped.wasm", 
             
             // This tells the loader where to find the JSON metadata for the whole build
             loaderUrl: buildUrl + "/game.json", 
@@ -151,6 +151,12 @@
             productName: "Fancade Pool",
             productVersion: "1.0",
             devicePixelRatio: 1, 
+            
+            // WebGL specific settings for better performance/compatibility
+            matchWebGLToCanvasSize: true,
+            webglContextAttributes: {
+                powerPreference: "high-performance" 
+            }
         };
 
         var unityContainer = document.querySelector("#game-container");
