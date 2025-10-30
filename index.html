@@ -16,11 +16,8 @@
     </script>
     
     <!-- 
-      2. Game Scripts (These must be inside your 'webapp/' folder)
-      
-      CRITICAL FIX: We must load both scripts separately for the engine to initialize.
+      2. Game Framework (Must be in the head as it sets up the environment)
     -->
-    <script src="webapp/index_stripped.js"></script>
     <script src="webapp/source_min_stripped.js"></script> 
     
     <link rel="stylesheet" href="webapp/style.css">
@@ -127,18 +124,26 @@
         </div>
     </div>
 
+    <!-- 
+      3. Game Loader and Initialization (Moved to the body to ensure dependencies are loaded)
+    -->
+    <script src="webapp/index_stripped.js"></script>
+
     <script>
         // The path to the 'webapp' folder.
         var buildUrl = "webapp"; 
 
         var config = {
-            // CRITICAL FIX: These must point to the specific asset files, not just game.json.
+            // Data file (always index_stripped.data)
             dataUrl: buildUrl + "/index_stripped.data",
-            frameworkUrl: buildUrl + "/source_min_stripped.js", // The core engine JS file
-            codeUrl: buildUrl + "/index_stripped.wasm", // The WebAssembly file
+            
+            // Framework JS file (source_min_stripped.js is loaded in the head, this points to its data source)
+            frameworkUrl: buildUrl + "/source_min_stripped.js", 
+            
+            // CRITICAL FIX: Changed from index_stripped.wasm (missing in your repo) to a common alternative.
+            codeUrl: buildUrl + "/source_min_stripped.wasm", 
             
             // This tells the loader where to find the JSON metadata for the whole build
-            // It is read internally by index_stripped.js
             loaderUrl: buildUrl + "/game.json", 
             
             streamingAssetsUrl: "StreamingAssets", 
