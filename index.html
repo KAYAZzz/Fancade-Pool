@@ -15,12 +15,8 @@
         var gameId = "1631551221147738"; 
     </script>
     
-    <!-- 
-      2. Game Framework (Must be in the head as it sets up the environment)
-    -->
-    <script src="webapp/source_min_stripped.js"></script> 
-    
-    <link rel="stylesheet" href="webapp/style.css">
+    <!-- FIX: Correcting stylesheet name from style.css to fancade_stripped.css -->
+    <link rel="stylesheet" href="webapp/fancade_stripped.css">
 
     <!-- Basic styling for responsiveness and loader -->
     <style>
@@ -125,8 +121,9 @@
     </div>
 
     <!-- 
-      3. Game Loader and Initialization (Moved to the body to ensure dependencies are loaded)
+      3. Game Loader and Initialization (Moved to the body to guarantee the HTML elements exist)
     -->
+    <script src="webapp/source_min_stripped.js"></script>
     <script src="webapp/index_stripped.js"></script>
 
     <script>
@@ -137,10 +134,10 @@
             // Data file (always index_stripped.data)
             dataUrl: buildUrl + "/index_stripped.data",
             
-            // Framework JS file (source_min_stripped.js is loaded in the head, this points to its data source)
+            // Framework JS file
             frameworkUrl: buildUrl + "/source_min_stripped.js", 
             
-            // CRITICAL FIX: Pointing to the file confirmed to exist in your 'webapp' folder.
+            // WASM File - Confirmed name from your repository
             codeUrl: buildUrl + "/index_stripped.wasm", 
             
             // This tells the loader where to find the JSON metadata for the whole build
