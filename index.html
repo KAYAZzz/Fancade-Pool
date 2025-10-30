@@ -17,9 +17,12 @@
     
     <!-- 
       2. Game Scripts (These must be inside your 'webapp/' folder)
+      
+      CRITICAL FIX: We must load both scripts separately for the engine to initialize.
     -->
     <script src="webapp/index_stripped.js"></script>
-    <script src="webapp/source_min_stripped.js"></script>
+    <script src="webapp/source_min_stripped.js"></script> 
+    
     <link rel="stylesheet" href="webapp/style.css">
 
     <!-- Basic styling for responsiveness and loader -->
@@ -125,19 +128,24 @@
     </div>
 
     <script>
-        // The correct WebGL 2018+ instantiation method.
-        var buildUrl = "webapp"; // The folder containing the Build assets
-        var loaderUrl = buildUrl + "/index_stripped.js"; // This is typically the main loader script
+        // The path to the 'webapp' folder.
+        var buildUrl = "webapp"; 
+
         var config = {
-            dataUrl: buildUrl + "/index_stripped.data", // File containing game assets
-            frameworkUrl: buildUrl + "/source_min_stripped.js", // Core Unity framework
-            codeUrl: buildUrl + "/index_stripped.wasm", // WebAssembly module
-            streamingAssetsUrl: "StreamingAssets", // Assuming standard Unity setup
+            // CRITICAL FIX: These must point to the specific asset files, not just game.json.
+            dataUrl: buildUrl + "/index_stripped.data",
+            frameworkUrl: buildUrl + "/source_min_stripped.js", // The core engine JS file
+            codeUrl: buildUrl + "/index_stripped.wasm", // The WebAssembly file
+            
+            // This tells the loader where to find the JSON metadata for the whole build
+            // It is read internally by index_stripped.js
+            loaderUrl: buildUrl + "/game.json", 
+            
+            streamingAssetsUrl: "StreamingAssets", 
             companyName: "KAYAZzz",
             productName: "Fancade Pool",
             productVersion: "1.0",
-            // The canvas element must be specified
-            devicePixelRatio: 1, // Uncomment this to have better rendering on retina screens.
+            devicePixelRatio: 1, 
         };
 
         var unityContainer = document.querySelector("#game-container");
@@ -155,7 +163,7 @@
             // Error handling
             console.error("Unity failed to load:", message);
             loader.style.display = 'none'; // Hide loader anyway
-            unityContainer.innerHTML = '<div style="color: red; padding: 20px;">Error loading game. Check console for details.</div>';
+            unityContainer.innerHTML = '<div style="color: red; padding: 20px; text-align: center;">Error loading game. Please check the console (F12) for asset errors.</div>';
         });
     </script>
 </body>
