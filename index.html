@@ -1,179 +1,45 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Fancade - Pool</title>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Pool</title>
     
-    <!-- 
-      1. Poki SDK (Must load first)
-    -->
-    <script src="game-cdn.poki.com/scripts/poki-sdk.js"></script>
-    
-    <script>
-        var gameId = "1631551221147738"; 
-    </script>
-    
-    <!-- FIX: Correcting stylesheet name from style.css to fancade_stripped.css -->
-    <link rel="stylesheet" href="webapp/fancade_stripped.css">
-
-    <!-- Basic styling for responsiveness and loader -->
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #1a1a1a;
-            color: #f0f0f0;
-            font-family: sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-        }
-        #game-container {
-            position: relative;
-            width: 100%;
-            max-width: 800px; /* Maximize game size */
-            aspect-ratio: 16 / 9; /* Common game aspect ratio */
-            background: #000;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-        }
-        #unity-canvas {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-        #loader {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #1a1a1a;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-        }
-        #progress-bar {
-            width: 80%;
-            max-width: 400px;
-            height: 15px;
-            background: #444;
-            border-radius: 7px;
-            overflow: hidden;
-            margin-top: 20px;
-        }
-        #progress-bar-full {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #60a5fa, #3b82f6);
-            transition: width 0.3s;
-        }
-        #game-info {
-            display: flex;
-            align-items: center;
-            margin-top: 15px;
-            padding: 10px;
-            width: 90%;
-            max-width: 800px;
-        }
-        #game-thumbnail {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-right: 15px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-        #game-title {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-        #game-author {
-            font-size: 0.9rem;
-            color: #999;
-        }
-    </style>
-</head>
-<body>
-    <div id="game-container">
-        <div id="loader">
-            <div id="loader-logo">Fancade Pool</div>
-            <div id="progress-bar">
-                <div id="progress-bar-full"></div>
+    <meta name="robots" content="noindex,nofollow" />
+    <script src="/js/main.js"></script>
+    <meta name="description" content="" />
+    <meta name="google" content="notranslate" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="webapp/fancade.css" />
+    <link rel="icon" href="webapp/cover.jpg" />
+  </head>
+  <body id="body">
+    <div id="modal_parent">
+      <div id="modal_content">
+        <span id="modal_close_button">&times;</span>
+        <div id="store_link_modal_content" class="modal_inner"></div>
+        <div id="share_file_modal_content" class="modal_inner"></div>
+      </div>
+    </div>
+    <div id="canvas_border" class="emscripten_border">
+      <div id="play_content" class="middle center">
+        <div class="edge">
+          <div class="box">
+            <div class="black">
+              <img src="webapp/cover.jpg" class="cover" />
+              <p class="title">Pool</p>
+              <p class="author">Fancade</p>
             </div>
+          </div>
         </div>
-        <canvas id="unity-canvas"></canvas>
+        <div id="progress_or_play"><progress id="progress" class="loading" value="0" max="100"></progress></div>
+        <p class="description"></p>
+      </div>
+      <canvas class="emscripten" id="canvas" tabindex="-1"></canvas>
+      <div id="gradient"></div>
+      <div id="webview_content"></div>
     </div>
-
-    <div id="game-info">
-        <img id="game-thumbnail" src="cover.jpg" onerror="this.onerror=null;this.src='https://placehold.co/60x60/3b82f6/ffffff?text=POOL'" alt="Game Thumbnail">
-        <div id="game-details">
-            <div id="game-title">Pool</div>
-            <div id="game-author">by KAYAZzz</div>
-        </div>
-    </div>
-
-    <!-- 
-      3. Game Loader and Initialization (Moved to the body to guarantee the HTML elements exist)
-    -->
-    <!-- CRITICAL FIX: Added 'defer' to ensure the framework runs AFTER the DOM elements are created -->
-    <script src="webapp/source_min_stripped.js" defer></script> 
-    <script src="webapp/index_stripped.js"></script>
-
-    <script>
-        // The path to the 'webapp' folder.
-        var buildUrl = "webapp"; 
-
-        var config = {
-            // Data file (always index_stripped.data)
-            dataUrl: buildUrl + "/index_stripped.data",
-            
-            // Framework JS file
-            frameworkUrl: buildUrl + "/source_min_stripped.js", 
-            
-            // WASM File - Confirmed name from your repository
-            codeUrl: buildUrl + "/index_stripped.wasm", 
-            
-            // This tells the loader where to find the JSON metadata for the whole build
-            loaderUrl: buildUrl + "/game.json", 
-            
-            streamingAssetsUrl: "StreamingAssets", 
-            companyName: "KAYAZzz",
-            productName: "Fancade Pool",
-            productVersion: "1.0",
-            devicePixelRatio: 1, 
-            
-            // WebGL specific settings for better performance/compatibility
-            matchWebGLToCanvasSize: true,
-            webglContextAttributes: {
-                powerPreference: "high-performance" 
-            }
-        };
-
-        var unityContainer = document.querySelector("#game-container");
-        var canvas = document.querySelector("#unity-canvas");
-        var progressBarFull = document.querySelector("#progress-bar-full");
-        var loader = document.querySelector("#loader");
-        
-        // This is the newer WebGL function that Fancade exports expect.
-        createUnityInstance(canvas, config, (progress) => {
-            progressBarFull.style.width = (progress * 100) + "%";
-        }).then((unityInstance) => {
-            // Success: Game has loaded
-            loader.style.display = 'none';
-        }).catch((message) => {
-            // Error handling
-            console.error("Unity failed to load:", message);
-            loader.style.display = 'none'; // Hide loader anyway
-            unityContainer.innerHTML = '<div style="color: red; padding: 20px; text-align: center;">Error loading game. Please check the console (F12) for asset errors.</div>';
-        });
-    </script>
-</body>
+    <script type="text/javascript" src="webapp/source_min_stripped.js"></script>
+    <script type="text/javascript" src="webapp/index_stripped.js"></script>
+  </body>
 </html>
