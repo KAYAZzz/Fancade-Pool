@@ -3,60 +3,160 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <!-- This meta tag is crucial for mobile responsiveness -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Fancade - Pool</title>
     
-    <!-- This is your gameId -->
+    <!-- 
+      1. Poki SDK (Must load first)
+    -->
+    <script src="game-cdn.poki.com/scripts/poki-sdk.js"></script>
+    
     <script>
         var gameId = "1631551221147738"; 
     </script>
     
-    <!-- These are the scripts from your folder -->
-    <script src="unity.js"></script>
-    <script src="index.js"></script>
-    
-    <!-- This is the stylesheet from your folder -->
-    <link rel="stylesheet" href="style.css">
+    <!-- 
+      2. Game Scripts (These must be inside your 'webapp/' folder)
+    -->
+    <script src="webapp/index_stripped.js"></script>
+    <script src="webapp/source_min_stripped.js"></script>
+    <link rel="stylesheet" href="webapp/style.css">
+
+    <!-- Basic styling for responsiveness and loader -->
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a;
+            color: #f0f0f0;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        #game-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px; /* Maximize game size */
+            aspect-ratio: 16 / 9; /* Common game aspect ratio */
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+        #unity-canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        #loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #1a1a1a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        #progress-bar {
+            width: 80%;
+            max-width: 400px;
+            height: 15px;
+            background: #444;
+            border-radius: 7px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        #progress-bar-full {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #60a5fa, #3b82f6);
+            transition: width 0.3s;
+        }
+        #game-info {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+            padding: 10px;
+            width: 90%;
+            max-width: 800px;
+        }
+        #game-thumbnail {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        #game-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        #game-author {
+            font-size: 0.9rem;
+            color: #999;
+        }
+    </style>
 </head>
-<body class="dark">
-    <!-- The main game container -->
+<body>
     <div id="game-container">
         <div id="loader">
+            <div id="loader-logo">Fancade Pool</div>
             <div id="progress-bar">
                 <div id="progress-bar-full"></div>
             </div>
-            <div id="loader-logo"></div>
         </div>
         <canvas id="unity-canvas"></canvas>
     </div>
 
-    <!-- Container for game title and info -->
     <div id="game-info">
-        <img id="game-thumbnail" src="game.png" alt="Game Thumbnail">
+        <img id="game-thumbnail" src="cover.jpg" onerror="this.onerror=null;this.src='https://placehold.co/60x60/3b82f6/ffffff?text=POOL'" alt="Game Thumbnail">
         <div id="game-details">
             <div id="game-title">Pool</div>
             <div id="game-author">by KAYAZzz</div>
         </div>
     </div>
 
-    <!-- Script to load the game -->
     <script>
-        // This is the correct way to load your game based on your unity.js file
-        var gameInstance = UnityLoader.instantiate(
-            "game-container",
-            "game.json", // This JSON file tells UnityLoader which files to load
-            {
-                onProgress: function (gameInstance, progress) {
-                    var progressBarFull = document.querySelector("#progress-bar-full");
-                    progressBarFull.style.width = (progress * 100) + "%";
-                    if (progress === 1) {
-                        document.querySelector("#loader").style.display = "none";
-                    }
-                }
-            }
-        );
+        // The correct WebGL 2018+ instantiation method.
+        var buildUrl = "webapp"; // The folder containing the Build assets
+        var loaderUrl = buildUrl + "/index_stripped.js"; // This is typically the main loader script
+        var config = {
+            dataUrl: buildUrl + "/index_stripped.data", // File containing game assets
+            frameworkUrl: buildUrl + "/source_min_stripped.js", // Core Unity framework
+            codeUrl: buildUrl + "/index_stripped.wasm", // WebAssembly module
+            streamingAssetsUrl: "StreamingAssets", // Assuming standard Unity setup
+            companyName: "KAYAZzz",
+            productName: "Fancade Pool",
+            productVersion: "1.0",
+            // The canvas element must be specified
+            devicePixelRatio: 1, // Uncomment this to have better rendering on retina screens.
+        };
+
+        var unityContainer = document.querySelector("#game-container");
+        var canvas = document.querySelector("#unity-canvas");
+        var progressBarFull = document.querySelector("#progress-bar-full");
+        var loader = document.querySelector("#loader");
+        
+        // This is the newer WebGL function that Fancade exports expect.
+        createUnityInstance(canvas, config, (progress) => {
+            progressBarFull.style.width = (progress * 100) + "%";
+        }).then((unityInstance) => {
+            // Success: Game has loaded
+            loader.style.display = 'none';
+        }).catch((message) => {
+            // Error handling
+            console.error("Unity failed to load:", message);
+            loader.style.display = 'none'; // Hide loader anyway
+            unityContainer.innerHTML = '<div style="color: red; padding: 20px;">Error loading game. Check console for details.</div>';
+        });
     </script>
 </body>
 </html>
-
